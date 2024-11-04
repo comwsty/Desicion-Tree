@@ -1,0 +1,29 @@
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.tree import export_text
+
+data = {
+    'Цвет': ['Красный', 'Оранжевый', 'Желтый', 'Красный', 'Оранжевый'],
+    'Размер': ['Большой', 'Средний', 'Маленький', 'Маленький', 'Большой'],
+    'Форма': ['Круглый', 'Круглый', 'Грушевидный', 'Грушевидный', 'Круглый'],
+    'Класс': ['Яблоко', 'Апельсин', 'Груша', 'Груша', 'Апельсин']
+}
+
+df = pd.DataFrame(data)
+
+df['Цвет'] = df['Цвет'].astype('category').cat.codes
+df['Размер'] = df['Размер'].astype('category').cat.codes
+df['Форма'] = df['Форма'].astype('category').cat.codes
+df['Класс'] = df['Класс'].astype('category').cat.codes
+
+X = df[['Цвет', 'Размер', 'Форма']]
+y = df['Класс']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+tree_rules = export_text(model, feature_names=['Цвет', 'Размер', 'Форма'], show_weights=True)
+print(tree_rules)
